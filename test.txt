@@ -1,0 +1,26 @@
+MonProg
+DATA
+INTEGER: A | B | C;
+FLOAT: X;
+VECTOR: Tab[0, 10: INTEGER];
+CONST: Pi = 3.14;
+END
+
+CODE
+A = (B + 7) / (5, 3 - (-2));
+X = 88.5;
+
+READ("$": @A);
+DISPLAY("La valeur de A est $": A);
+
+IF (A GE B):
+    C = E + 2.6;
+ELSE:
+    DISPLAY("La valeur de A est $": A);
+END
+
+FOR (I:2:N)
+    READ("%": X);
+END
+
+END
