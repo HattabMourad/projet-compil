@@ -2,73 +2,77 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "synt.tab.h"
 
 int nb_ligne = 1;
 int col = 1;
 %}
 
-IDF [A-Z][a-zA-Z0-9]{0,7}
+%option noyywrap
+
+IDF     [A-Z][a-zA-Z0-9]{0,7}
 INTEGER [0-9]+
-FLOAT [0-9]+\.[0-9]+
-CHAR \'(.|\\n|\\t)\'
-STRING \"[^\"]{2,}\"
+FLOAT   [0-9]+\.[0-9]+
+CHAR    \'(.|\\n|\\t)\'
+STRING  \"[^\"]{2,}\"
 
 %%
 
-"DATA"      { printf("DATA\n"); }
-"CODE"      { printf("CODE\n"); }
-"END"       { printf("END\n"); }
-"VECTOR"    { printf("VECTOR\n"); }
-"INTEGER"   { printf("INTEGER\n"); }
-"FLOAT"     { printf("FLOAT\n"); }
-"CONST"     { printf("CONST\n"); }
-"READ"      { printf("READ\n"); }
-"DISPLAY"   { printf("DISPLAY\n"); }
-"CHAR"      { printf("CHAR\n"); }
-"STRING"    { printf("STRING\n"); }
-"IF"        { printf("IF\n"); }
-"ELSE"      { printf("ELSE\n"); }
-"FOR"       { printf("FOR\n"); }
+"DATA"      { printf("DATA\n"); return DATA; }
+"CODE"      { printf("CODE\n"); return CODE; }
+"END"       { printf("END\n"); return END; }
+"VECTOR"    { printf("VECTOR\n"); return VECTOR; }
+"CONST"     { printf("CONST\n"); return CONST; }
+"READ"      { printf("READ\n"); return READ; }
+"DISPLAY"   { printf("DISPLAY\n"); return DISPLAY; }
+"INTEGER"   { printf("INTEGER\n"); return INTEGER; }
+"FLOAT"     { printf("FLOAT\n"); return FLOAT; }
+"CHAR"      { printf("CHAR\n"); return CHAR; }
+"STRING"    { printf("STRING\n"); return STRING; }
+"IF"        { printf("IF\n"); return IF; }
+"ELSE"      { printf("ELSE\n"); return ELSE; }
+"FOR"       { printf("FOR\n"); return FOR; }
+"WHILE"     { printf("WHILE\n"); return WHILE; }
+"DO"        { printf("DO\n"); return DO; }
 
-"OR"        { printf("OR\n"); }
-"AND"       { printf("AND\n"); }
-"NOT"       { printf("NOT\n"); }
-"GE"        { printf("GE\n"); }
-"LE"        { printf("LE\n"); }
-"G"         { printf("GT\n"); }
-"L"         { printf("LT\n"); }
-"EQ"        { printf("EQ\n"); }
-"DI"        { printf("DI\n"); }
+"OR"        { printf("OR\n"); return OR; }
+"AND"       { printf("AND\n"); return AND; }
+"NOT"       { printf("NOT\n"); return NOT; }
+"GE"        { printf("GE\n"); return GE; }
+"LE"        { printf("LE\n"); return LE; }
+"G"         { printf("GT\n"); return GT; }
+"L"         { printf("LT\n"); return LT; }
+"EQ"        { printf("EQ\n"); return EQ; }
+"DI"        { printf("DI\n"); return DI; }
 
-"("         { printf("(\n"); }
-")"         { printf(")\n"); }
-"["         { printf("[\n"); }
-"]"         { printf("]\n"); }
-":"         { printf(":\n"); }
-","         { printf(",\n"); }
-";"         { printf(";\n"); }
-"="         { printf("=\n"); }
-"|"         { printf("|\n"); }
-"@"         { printf("@\n"); }
+"("         { printf("(\n"); return LPAREN; }
+")"         { printf(")\n"); return RPAREN; }
+"["         { printf("[\n"); return LBRACKET; }
+"]"         { printf("]\n"); return RBRACKET; }
+":"         { printf(":\n"); return COLON; }
+","         { printf(",\n"); return COMMA; }
+";"         { printf(";\n"); return PVG; }
+"="         { printf("=\n"); return EGAL; }
+"|"         { printf("|\n"); return BARV; }
+"@"         { printf("@\n"); return ADR; }
 
-"+"         { printf("+\n"); }
-"-"         { printf("-\n"); }
-"*"         { printf("*\n"); }
-"/"         { printf("/\n"); }
-"\"$\""     { printf("FORMAT: $\n"); }
-"\"%\""     { printf("FORMAT: %%\n"); }
-"\"#\""     { printf("FORMAT: #\n"); }
-"\"&\""     { printf("FORMAT: &\n"); }
+"+"         { printf("+\n"); return PLUS; }
+"-"         { printf("-\n"); return MINUS; }
+"*"         { printf("*\n"); return MULT; }
+"/"         { printf("/\n"); return DIV; }
 
+"\"$\""     { printf("FORMAT: $\n"); return FORMAT_DOLLAR; }
+"\"%\""     { printf("FORMAT: %%\n"); return FORMAT_PERCENT; }
+"\"#\""     { printf("FORMAT: #\n"); return FORMAT_HASH; }
+"\"&\""     { printf("FORMAT: &\n"); return FORMAT_AMP; }
 
+"§"[^\n]*   { /* ignore comments */ }
 
-"§"[^\n]*    { /* ignore comments */ }
-
-{IDF}       { printf("IDF: %s\n", yytext); }
-{INTEGER}   { printf("INTEGER: %s\n", yytext); }
-{FLOAT}     { printf("FLOAT: %s\n", yytext); }
-{CHAR}      { printf("CHAR: %s\n", yytext); }
-{STRING}    { printf("STRING: %s\n", yytext); }
+{IDF}       { printf("IDF: %s\n", yytext); return IDF; }
+{INTEGER}   { printf("INTEGER: %s\n", yytext); return INTEGER; }
+{FLOAT}     { printf("FLOAT: %s\n", yytext); return FLOAT; }
+{CHAR}      { printf("CHAR: %s\n", yytext); return CHAR; }
+{STRING}    { printf("STRING: %s\n", yytext); return STRING; }
 
 \n          { nb_ligne++; col = 1; }
 [ \t]+      { col += yyleng; }
@@ -77,12 +81,3 @@ STRING \"[^\"]{2,}\"
 
 %%
 
-int main ()
-{
-    yylex();
-    return 0;
-}
-
-int yywrap() {
-    return 1;
-}

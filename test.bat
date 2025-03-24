@@ -1,3 +1,4 @@
 flex lex.l
-gcc lex.yy.c -o test.exe
+bison -d synt.y 
+gcc lex.yy.c synt.tab.c -o test.exe
 test.exe < test.txt

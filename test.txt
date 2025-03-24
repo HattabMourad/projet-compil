@@ -22,5 +22,4 @@ END
 FOR (I:2:N)
     READ("%": X);
 END
-
 END
