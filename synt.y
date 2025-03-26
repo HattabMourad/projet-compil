@@ -2,64 +2,129 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int yylex();
+extern int nb_ligne;
+extern int col;
 void yyerror(const char *s);
+int yylex();
 %}
 
-%token DATA CODE END VECTOR IF ELSE WHILE DO FOR CONST READ DISPLAY 
-%token IDF CST INTEGER_VAL FLOAT_VAL CHAR_VAL STRING_VAL
+%token DATA CODE END VECTOR IF ELSE POINT FOR CONST READ DISPLAY 
+%token IDF INTEGER_VAL FLOAT_VAL CHAR_VAL STRING_VAL
 %token INTEGER FLOAT CHAR STRING 
 %token LPAREN RPAREN LBRACKET RBRACKET COLON COMMA PVG EGAL BARV ADR
 %token PLUS MINUS MULT DIV FORMAT_DOLLAR FORMAT_PERCENT FORMAT_HASH FORMAT_AMP
 %token OR AND NOT GE LE GT LT EQ DI
-%token OPCOND 
+
+%start program
+
 %%
-
 program:
-    IDF DATA statement_list END CODE statement_list END END
+      IDF DATA declarations END CODE instructions END END
+      { printf("Program parsed successfully!\n"); }
     ;
 
-statement_list:
-    statement
-    | statement_list statement
+declarations:
+      declaration
+    | declarations declaration
     ;
 
-statement:
-    
-    | affectation
-    | entree
-    | sortie
-    | if_else
-    | boucle
+declaration:
+      type COLON list_variables PVG
+    | VECTOR COLON IDF LBRACKET INTEGER_VAL COMMA INTEGER_VAL COLON type RBRACKET PVG
+    | CONST COLON IDF EGAL constant PVG
+    ;
+
+list_variables:
+      IDF
+    | IDF BARV list_variables
     ;
 
 type:
-    INTEGER
+      INTEGER
     | FLOAT
     | CHAR
     | STRING
     ;
 
-list_variables:
-    IDF 
-    | IDF BARV list_variables
-    ;  
+constant:
+      INTEGER_VAL
+    | FLOAT_VAL
+    | CHAR_VAL
+    | STRING_VAL
+    ;
+
+instructions:
+      instruction
+    | instructions instruction
+    ;
+
+instruction:
+      affectation
+    | io_read
+    | io_display
+    | if_else
+    | boucle
+    ;
+
+affectation:
+      IDF EGAL expression PVG
+      { printf("Affectation: IDF = expression;\n"); }
+    ;
+
+expression:
+      constant
+    | IDF
+    | IDF op_arithmetique constant
+    | IDF op_arithmetique IDF
+    ;
 
 op_arithmetique:
-    PLUS
+      PLUS
     | MINUS
     | MULT
     | DIV
     ;
 
 op_logique:
-    AND
-    | OR
+      OR
+    | AND
     | NOT
     ;
 
+logical_expression:
+      expression POINT op_logique POINT expression
+    | op_logique POINT expression
+    ;
+
+io_read:
+      READ LPAREN format COLON ADR IDF RPAREN PVG
+      { printf("Read Instruction\n"); }
+    ;
+
+io_display:
+      DISPLAY LPAREN STRING_VAL COLON IDF RPAREN PVG
+      { printf("Display Instruction\n"); }
+    ;
+
+format:
+      FORMAT_DOLLAR
+    | FORMAT_PERCENT
+    | FORMAT_HASH
+    | FORMAT_AMP
+    ;
+
+if_else:
+      IF LPAREN condition RPAREN COLON instructions ELSE COLON instructions END
+      { printf("IF-ELSE parsed\n"); }
+    ;
+
+condition:
+      expression POINT op_comparaison POINT expression
+    | expression POINT op_logique POINT expression
+    ;
+
 op_comparaison:
-    GT
+      GT
     | LT
     | GE
     | LE
@@ -67,81 +132,19 @@ op_comparaison:
     | DI
     ;
 
-declaration: 
-    type COLON list_variables
-    ;
-
-declaration_tableaux:
-    VECTOR COLON IDF LBRACKET INTEGER COMMA INTEGER type RBRACKET PVG
-    ;
-
-declaration_contantes:
-    CONST COLON affectation PVG
-    ;
-
-instruction:
-    IDF EGAL CST PVG 
-    { printf("Instruction: IDF = CST;\n"); }
-    | IDF EGAL IDF PLUS CST PVG
-    { printf("Instruction: IDF = IDF + CST;\n"); }
-    | IDF EGAL IDF MINUS CST PVG
-    { printf("Instruction: IDF = IDF - CST;\n"); }
-    | IDF EGAL IDF MULT CST PVG
-    { printf("Instruction: IDF = IDF * CST;\n"); }
-    | IDF EGAL IDF DIV CST PVG
-    { printf("Instruction: IDF = IDF / CST;\n"); }
-    ;
-
-list_instruction:
-    instruction
-    | list_instruction instruction
-    ;
-
-condition:
-    IDF op_comparaison CST  
-    { printf("Condition: IDF OPCOND CST\n"); }
-    | CST op_comparaison CST 
-    { printf("Condition: CST OPCOND CST\n"); }
-    ;
-
-expression:
-    | CHAR
-    | STRING
-    ;
-
-affectation:
-    IDF EGAL expression PVG
-    { printf("Affectation: IDF = CST;\n"); }
-    ;
-
-entree:
-    READ LPAREN STRING COLON ADR IDF RPAREN PVG
-    { printf("Enter: READ(\"format\": @idf);\n"); }
-    ;
-
-sortie:
-    DISPLAY LPAREN STRING COLON IDF RPAREN PVG
-    { printf("DISPLAY(\"message\": idf);\n"); }
-    ;
-
-if_else:
-    IF LPAREN condition RPAREN COLON instruction ELSE COLON instruction END
-    { printf("If-Else: IF(condition): instruction ELSE: instruction END\n"); }
-    ;
-
 boucle:
-    FOR LPAREN IDF COLON INTEGER COLON condition RPAREN instruction END
-    { printf("FOR loop: IDF: step: condition instruction END\n"); }
+      FOR LPAREN IDF COLON INTEGER_VAL COLON IDF RPAREN instructions END
+      { printf("FOR Loop parsed\n"); }
     ;
 
 %%
 
 void yyerror(const char *s) {
-    printf("Error: syntax error\n");
+    printf("Syntax Error at line %d, column %d: %s\n", nb_ligne, col, s);
 }
 
 int main() {
-    printf("Enter your code:\n");
+    printf("Enter your PHYLOG program:\n");
     yyparse();
     return 0;
 }
