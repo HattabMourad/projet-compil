@@ -118,10 +118,13 @@ if_else:
       { printf("IF-ELSE parsed\n"); }
     ;
 
-condition:
-      expression POINT op_comparaison POINT expression
-    | expression POINT op_logique POINT expression
+conditions:
+      condition
+    | conditions POINT op_logique POINT condition
     ;
+
+condition:
+      expression POINT op_comparaison POINT expression;
 
 op_comparaison:
       GT
