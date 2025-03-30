@@ -8,16 +8,17 @@ void yyerror(const char *s);
 int yylex();
 %}
 
-%token DATA CODE END VECTOR IF ELSE POINT FOR CONST READ DISPLAY 
+%token DATA CODE END VECTOR IF ELSE FOR CONST READ DISPLAY 
 %token IDF INTEGER_VAL FLOAT_VAL CHAR_VAL STRING_VAL
 %token INTEGER FLOAT CHAR STRING 
 %token LPAREN RPAREN LBRACKET RBRACKET COLON COMMA PVG EGAL BARV ADR
 %token PLUS MINUS MULT DIV FORMAT_DOLLAR FORMAT_PERCENT FORMAT_HASH FORMAT_AMP
-%token OR AND NOT GE LE GT LT EQ DI
+%token OR AND NOT GE LE GT LT EQ DI POINT
 
 %start program
 
 %%
+
 program:
       IDF DATA declarations END CODE instructions END END
       { printf("Program parsed successfully!\n"); }
@@ -91,11 +92,6 @@ op_logique:
     | NOT
     ;
 
-logical_expression:
-      expression POINT op_logique POINT expression
-    | op_logique POINT expression
-    ;
-
 io_read:
       READ LPAREN format COLON ADR IDF RPAREN PVG
       { printf("Read Instruction\n"); }
@@ -103,6 +99,7 @@ io_read:
 
 io_display:
       DISPLAY LPAREN STRING_VAL COLON IDF RPAREN PVG
+    | DISPLAY LPAREN STRING_VAL RPAREN PVG
       { printf("Display Instruction\n"); }
     ;
 
@@ -114,17 +111,20 @@ format:
     ;
 
 if_else:
-      IF LPAREN condition RPAREN COLON instructions ELSE COLON instructions END
+      IF LPAREN conditions RPAREN COLON instructions ELSE COLON instructions END
+      IF LPAREN conditions RPAREN COLON instructions END
       { printf("IF-ELSE parsed\n"); }
     ;
 
 conditions:
       condition
     | conditions POINT op_logique POINT condition
+    | NOT POINT condition
     ;
 
 condition:
-      expression POINT op_comparaison POINT expression;
+      expression POINT op_comparaison POINT expression
+    ;
 
 op_comparaison:
       GT
@@ -136,7 +136,7 @@ op_comparaison:
     ;
 
 boucle:
-      FOR LPAREN IDF COLON INTEGER_VAL COLON IDF RPAREN instructions END
+      FOR LPAREN IDF COLON INTEGER_VAL COLON expression RPAREN instructions END
       { printf("FOR Loop parsed\n"); }
     ;
 

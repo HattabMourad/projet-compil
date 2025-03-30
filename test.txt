@@ -1,24 +1,34 @@
-MonProg
+MyProg
 DATA
-INTEGER: A | B | C;
-FLOAT: X;
-VECTOR: Tab[0, 10: INTEGER];
-CONST: Pi = 3.14;
+    INTEGER: A | B | C;
+    FLOAT: X;
+    VECTOR: Tab[0, 10: INTEGER];
+    CONST: Pi = 3.14;
 END
 
 CODE
-A = B + 5;
-READ("$": @A);
-DISPLAY("La valeur de A est $": A);
+    A = 5;
+    B = 10;
+    C = A * B;
 
-IF (A.GE.10):
-    B = B + 1;
-ELSE:
-    B = B - 1;
-END
+    READ("$": @X);
 
-FOR (I : 2 : N)
-    B = B + 1;
-END
+    DISPLAY("Value of A: $" : A);
+    DISPLAY("Value of B: $" : B);
+
+    IF (A.GE.10.AND.B.LT.5):
+        B = B + 1;
+    ELSE:
+        B = B - 1;
+    END
+
+    IF (NOT.A.EQ.5):
+        DISPLAY("A is not 5");
+    END
+
+    FOR (I : 0 : 5)
+        B = B + 2;
+        DISPLAY("Iteration: $" : B);
+    END
 END
 END
