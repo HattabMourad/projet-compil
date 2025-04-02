@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "tableSymbole.h" 
 
 extern int nb_ligne;
 extern int col;
@@ -148,6 +149,14 @@ void yyerror(const char *s) {
 
 int main() {
     printf("Enter your PHYLOG program:\n");
+
     yyparse();
+    initialisation();
+
+    if (1) {
+        printf("=== TABLE DES SYMBOLES INITIALISÉE ===\n");
+        afficher();
+    }
+
     return 0;
 }

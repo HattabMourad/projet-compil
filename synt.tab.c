@@ -72,6 +72,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "tableSymbole.h" 
 
 extern int nb_ligne;
 extern int col;
@@ -80,7 +81,7 @@ int yylex();
 
 
 /* Line 189 of yacc.c  */
-#line 84 "synt.tab.c"
+#line 85 "synt.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -171,7 +172,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 175 "synt.tab.c"
+#line 176 "synt.tab.c"
 
 #ifdef short
 # undef short
@@ -481,12 +482,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    23,    23,    28,    29,    33,    34,    35,    39,    40,
-      44,    45,    46,    47,    51,    52,    53,    54,    58,    59,
-      63,    64,    65,    66,    67,    71,    76,    77,    78,    79,
-      83,    84,    85,    86,    90,    91,    92,    96,   101,   102,
-     107,   108,   109,   110,   114,   120,   121,   122,   126,   130,
-     131,   132,   133,   134,   135,   139
+       0,    24,    24,    34,    35,    39,    40,    41,    45,    46,
+      50,    51,    52,    53,    57,    58,    59,    60,    64,    65,
+      69,    70,    71,    72,    73,    77,    82,    83,    84,    85,
+      89,    90,    91,    92,    96,    97,    98,   102,   107,   108,
+     113,   114,   115,   116,   120,   126,   127,   128,   132,   136,
+     137,   138,   139,   140,   141,   145
 };
 #endif
 
@@ -1480,49 +1481,54 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 24 "synt.y"
-    { printf("Program parsed successfully!\n"); ;}
+#line 25 "synt.y"
+    {                 if (1) {
+                    printf("\n=== TABLE DES SYMBOLES APRÈS ANALYSE COMPLÈTE ===\n");
+                    afficher();
+                }
+
+        printf("Program parsed successfully!\n"); ;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 72 "synt.y"
+#line 78 "synt.y"
     { printf("Affectation: IDF = expression;\n"); ;}
     break;
 
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 97 "synt.y"
+#line 103 "synt.y"
     { printf("Read Instruction\n"); ;}
     break;
 
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 103 "synt.y"
+#line 109 "synt.y"
     { printf("Display Instruction\n"); ;}
     break;
 
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 116 "synt.y"
+#line 122 "synt.y"
     { printf("IF-ELSE parsed\n"); ;}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 140 "synt.y"
+#line 146 "synt.y"
     { printf("FOR Loop parsed\n"); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1526 "synt.tab.c"
+#line 1532 "synt.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1734,7 +1740,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 143 "synt.y"
+#line 149 "synt.y"
 
 
 void yyerror(const char *s) {
@@ -1743,7 +1749,15 @@ void yyerror(const char *s) {
 
 int main() {
     printf("Enter your PHYLOG program:\n");
+
     yyparse();
+    initialisation();
+
+    if (1) {
+        printf("=== TABLE DES SYMBOLES INITIALISÉE ===\n");
+        afficher();
+    }
+
     return 0;
 }
 
