@@ -1,10 +1,11 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "tableSymbole.h" 
+#include "tableSymbole.h"
 
 extern int nb_ligne;
 extern int col;
+extern FILE* yyin;
 void yyerror(const char *s);
 int yylex();
 %}
@@ -113,7 +114,7 @@ format:
 
 if_else:
       IF LPAREN conditions RPAREN COLON instructions ELSE COLON instructions END
-      IF LPAREN conditions RPAREN COLON instructions END
+    | IF LPAREN conditions RPAREN COLON instructions END
       { printf("IF-ELSE parsed\n"); }
     ;
 
@@ -147,16 +148,32 @@ void yyerror(const char *s) {
     printf("Syntax Error at line %d, column %d: %s\n", nb_ligne, col, s);
 }
 
-int main() {
-    printf("Enter your PHYLOG program:\n");
-
-    yyparse();
-    initialisation();
-
-    if (1) {
-        printf("=== TABLE DES SYMBOLES INITIALISÉE ===\n");
-        afficher();
+int main(int argc, char *argv[]) {
+    printf("PHYLOG Compiler\n");
+    
+    if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+        if (yyin == NULL) {
+            printf("Cannot open file %s\n", argv[1]);
+            exit(1);
+        }
+        printf("Parsing file: %s\n", argv[1]);
+    } else {
+        printf("Enter your PHYLOG program (standard input):\n");
+        yyin = stdin;
     }
-
+    
+    // Initialize the symbol tables
+    initialization();
+    
+    // Parse the input
+    if (yyparse() == 0) {
+        printf("\n=== SYMBOL TABLES ===\n");
+        display();
+    }
+    
+    // Free all allocated memory
+    freeAllTables();
+    
     return 0;
 }
