@@ -1,4 +1,4 @@
 test.exe
-lex.yy.c
 synt.tab.c
 synt.tab.h
+lex.yy.c

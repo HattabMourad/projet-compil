@@ -455,8 +455,8 @@ char *yytext;
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tableSymbole.h"
 #include "synt.tab.h"
+#include "tableSymbole.h"
 
 extern int yylval;
 
