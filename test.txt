@@ -14,8 +14,8 @@ CODE
 
     READ("$": @X);
 
-    DISPLAY("Value of A: $" : A);
-    DISPLAY("Value of B: $" : B);
+    DISPLAY("Value of A:" $ : A);
+    DISPLAY("Value of B:" $ : B);
 
     IF (A.GE.10.AND.B.LT.5):
         B = B + 1;

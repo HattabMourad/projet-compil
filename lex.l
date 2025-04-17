@@ -62,7 +62,7 @@ STRING  \"([^\"\\]|\\.)*\"
 "*"         { insertIfNotExists(yytext, "MULT", "Separator", 0, 2); return MULT; }
 "/"         { insertIfNotExists(yytext, "DIV", "Separator", 0, 2); return DIV; }
 
-\"$\"     { insertIfNotExists(yytext, "FORMAT_DOLLAR", "Separator", 0, 2); return FORMAT_DOLLAR; }
+\"$\"       { insertIfNotExists(yytext, "FORMAT_DOLLAR", "Separator", 0, 2); return FORMAT_DOLLAR; }
 \"%\"       { insertIfNotExists(yytext, "FORMAT_PERCENT", "Separator", 0, 2); return FORMAT_PERCENT; }
 \"#\"       { insertIfNotExists(yytext, "FORMAT_HASH", "Separator", 0, 2); return FORMAT_HASH; }
 \"&\"       { insertIfNotExists(yytext, "FORMAT_AMP", "Separator", 0, 2); return FORMAT_AMP; }

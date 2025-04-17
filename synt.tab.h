@@ -68,31 +68,45 @@
      EGAL = 284,
      BARV = 285,
      ADR = 286,
-     PLUS = 287,
-     MINUS = 288,
-     MULT = 289,
-     DIV = 290,
-     FORMAT_DOLLAR = 291,
-     FORMAT_PERCENT = 292,
-     FORMAT_HASH = 293,
-     FORMAT_AMP = 294,
-     OR = 295,
-     AND = 296,
-     NOT = 297,
+     FORMAT_DOLLAR = 287,
+     FORMAT_PERCENT = 288,
+     FORMAT_HASH = 289,
+     FORMAT_AMP = 290,
+     NOT = 291,
+     POINT = 292,
+     DI = 293,
+     EQ = 294,
+     LT = 295,
+     GT = 296,
+     LE = 297,
      GE = 298,
-     LE = 299,
-     GT = 300,
-     LT = 301,
-     EQ = 302,
-     DI = 303,
-     POINT = 304
+     AND = 299,
+     OR = 300,
+     DIV = 301,
+     MULT = 302,
+     MINUS = 303,
+     PLUS = 304
    };
 #endif
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+{
+
+/* Line 1676 of yacc.c  */
+#line 13 "synt.y"
+
+  int entier;
+  char* str;
+  float reel;
+
+
+
+/* Line 1676 of yacc.c  */
+#line 109 "synt.tab.h"
+} YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
