@@ -13,9 +13,8 @@ char* currentType = NULL;
 %}
 
 %union {
-  char* strVal;
-  float floatVal;
   int   entier;
+  int   boolVal;
   char* str;
   float reel;
   struct {
@@ -37,6 +36,7 @@ char* currentType = NULL;
 %type <str> op_logique
 %type <str> op_comparaison
 %type <str> format
+%type <boolVal> conditions condition
 %type <exprAttr> expression
 %type <exprAttr> constant
 %start program
@@ -207,16 +207,14 @@ io_read:
 io_display:
       DISPLAY LPAREN STRING_VAL COLON IDF RPAREN PVG
       {
-        // Extract the format sign from the string if present
         char* str = $3;
         int len = strlen(str);
         char fmt = 0;
         if (len > 2 && (str[len-2] == '$' || str[len-2] == '%' || str[len-2] == '#' || str[len-2] == '&')) {
             fmt = str[len-2];
-            str[len-2] = '\0'; // Remove format sign from string
-            str[len-1] = '\0'; // Remove closing quote
+            str[len-2] = '\0';
+            str[len-1] = '\0';
         }
-        // Remove opening quote
         char* phrase = str + 1;
         char* idf_type = getVarType($5);
         if (fmt) {
@@ -242,18 +240,49 @@ io_display:
 
 if_else:
       IF LPAREN conditions RPAREN COLON instructions ELSE COLON instructions END
+      {
+        if ($3) {
+            printf("IF condition true, executing first block\n");
+        } else {
+            printf("IF condition false, executing else block\n");
+        }
+        printf("IF parsed\n");
+      }
     | IF LPAREN conditions RPAREN COLON instructions END
-      { printf("IF-ELSE parsed\n"); }
+      {
+        if ($3) {
+            printf("IF condition true, executing block\n");
+        } else {
+            printf("IF condition false, skipping block\n");
+        }
+        printf("IF parsed\n");
+      }
     ;
 
 conditions:
-      condition
+      condition { $$ = $1; }
     | conditions POINT op_logique POINT condition
-    | NOT POINT condition
+      {
+        if (strcmp($3, "AND") == 0) $$ = $1 && $5;
+        else if (strcmp($3, "OR") == 0) $$ = $1 || $5;
+      }
+    | NOT POINT condition { $$ = !$3; }
     ;
 
 condition:
       expression POINT op_comparaison POINT expression
+      {
+        if (strcmp($3, "GT") == 0)  $$ = ($1.val > $5.val);
+        else if (strcmp($3, "LT") == 0) $$ = ($1.val < $5.val);
+        else if (strcmp($3, "GE") == 0) $$ = ($1.val >= $5.val);
+        else if (strcmp($3, "LE") == 0) $$ = ($1.val <= $5.val);
+        else if (strcmp($3, "EQ") == 0) $$ = ($1.val == $5.val);
+        else if (strcmp($3, "DI") == 0) $$ = ($1.val != $5.val);
+        else {
+            printf("Error on line %d: Unknown comparison operator %s\n", nb_ligne, $3);
+            $$ = 0;
+        }
+      }
     ;
 
 op_comparaison:
@@ -266,8 +295,37 @@ op_comparaison:
     ;
 
 boucle:
-      FOR LPAREN IDF COLON INTEGER_VAL COLON expression RPAREN instructions END
-      { printf("FOR Loop parsed\n"); }
+      FOR LPAREN IDF COLON INTEGER_VAL COLON IDF RPAREN instructions END
+      { 
+        insertIfNotExistsIDF($3, "IDF", "INTEGER", 0);
+        char* idf_type = getVarType($7);
+        if (strcmp(idf_type, "INTEGER") != 0) {
+            printf("Error on line %d: Type mismatch in FOR loop, expected INTEGER\n", nb_ligne);
+        } else {
+            int start = $5;
+            int end = (int)getVarValue($7);
+            if (start > end) {
+                printf("Error on line %d: FOR loop start value greater than end value\n", nb_ligne);
+            } else {
+                for (int i = start; i <= end; i++) {
+                    updateIDFValue($3, i);
+                }
+            }
+        }
+      }
+    | FOR LPAREN IDF COLON INTEGER_VAL COLON INTEGER_VAL RPAREN instructions END
+      { 
+        insertIfNotExistsIDF($3, "IDF", "INTEGER", 0);
+        int start = $5;
+        int end = $7;
+        if (start > end) {
+            printf("Error on line %d: FOR loop start value greater than end value\n", nb_ligne);
+        } else {
+            for (int i = start; i <= end; i++) {
+                updateIDFValue($3, i);
+            }
+        }
+      }
     ;
 
 %%
@@ -291,15 +349,12 @@ int main(int argc, char *argv[]) {
         yyin = stdin;
     }
     
-    // Initialize the symbol tables
     initialization();
     
-    // Parse the input
     if (yyparse() == 0) {
         afficher();
     }
     
-    // Free all allocated memory
     freeAllTables();
     
     return 0;

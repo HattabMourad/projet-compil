@@ -285,24 +285,24 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 53
-#define YY_END_OF_BUFFER 54
+#define YY_NUM_RULES 52
+#define YY_END_OF_BUFFER 53
 static yyconst short int yy_accept[127] =
     {   0,
-        0,    0,   54,   52,   51,   50,   39,   52,   24,   25,
-       37,   35,   29,   36,   34,   38,   46,   28,   30,   31,
-       33,   45,   45,   45,   45,   45,   45,   45,   45,   45,
-       45,   45,   45,   45,   45,   26,   27,   32,   52,   51,
-        0,   49,    0,    0,    0,    0,    0,    0,    0,    0,
-       46,   45,   45,   45,   45,   45,   23,   45,   45,   22,
-       45,   45,   18,   20,   12,   45,   19,   21,   45,   15,
-       45,   45,   45,   44,   42,   40,   41,   43,   48,   47,
-       45,   16,   45,   45,   45,   45,   45,   45,    3,   45,
-       14,   45,   17,   45,   45,   45,   44,   45,   10,    2,
+        0,    0,   53,   51,   50,   49,   51,   51,   24,   25,
+       37,   35,   29,   36,   34,   38,   45,   28,   30,   31,
+       33,   44,   44,   44,   44,   44,   44,   44,   44,   44,
+       44,   44,   44,   44,   44,   26,   27,   32,   51,   50,
+        0,   48,    0,    0,    0,    0,    0,    0,    0,    0,
+       45,   44,   44,   44,   44,   44,   23,   44,   44,   22,
+       44,   44,   18,   20,   12,   44,   19,   21,   44,   15,
+       44,   44,   44,   43,   41,   39,   40,   42,   47,   46,
+       44,   16,   44,   44,   44,   44,   44,   44,    3,   44,
+       14,   44,   17,   44,   44,   44,   43,   44,   10,    2,
 
-       45,    1,   45,   13,   45,   45,    6,   45,   45,   45,
-        5,   45,    9,   45,   45,   45,   45,   45,   45,   11,
-        4,   45,    7,    8,   45,    0
+       44,    1,   44,   13,   44,   44,    6,   44,   44,   44,
+        5,   44,    9,   44,   44,   44,   44,   44,   44,   11,
+        4,   44,    7,    8,   44,    0
     } ;
 
 static yyconst int yy_ec[256] =
@@ -891,99 +891,94 @@ YY_RULE_SETUP
 case 39:
 YY_RULE_SETUP
 #line 63 "lex.l"
-{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return QUOTES; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_DOLLAR; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 64 "lex.l"
-{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_DOLLAR; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_PERCENT; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 65 "lex.l"
-{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_PERCENT; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_HASH; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 66 "lex.l"
-{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_HASH; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_AMP; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 67 "lex.l"
-{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_AMP; }
+#line 68 "lex.l"
+{ /* Comment line: skip */ }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 69 "lex.l"
-{ /* Comment line: skip */ }
-	YY_BREAK
-case 45:
-YY_RULE_SETUP
-#line 71 "lex.l"
+#line 70 "lex.l"
 {  
                 col += strlen(yytext); 
                 yylval.str = strdup(yytext);
                 return IDF; 
             }
 	YY_BREAK
-case 46:
+case 45:
 YY_RULE_SETUP
-#line 76 "lex.l"
+#line 75 "lex.l"
 { 
                 insertIfNotExistsIDF(yytext, "CONST", "INTEGER", atoi(yytext));
                 col += strlen(yytext);
                 yylval.entier = atoi(yytext); return INTEGER_VAL; 
             }
 	YY_BREAK
-case 47:
+case 46:
 YY_RULE_SETUP
-#line 81 "lex.l"
+#line 80 "lex.l"
 {
                 insertIfNotExistsIDF(yytext, "CONST", "FLOAT", atof(yytext));
                 col += strlen(yytext);
                 yylval.reel = atof(yytext); return FLOAT_VAL; 
             }
 	YY_BREAK
-case 48:
+case 47:
 YY_RULE_SETUP
-#line 86 "lex.l"
+#line 85 "lex.l"
 { 
                 insertIfNotExistsIDF(yytext, "", "CHAR", yytext[1]);
                 col += strlen(yytext);
                 return CHAR_VAL;
             }
 	YY_BREAK
-case 49:
+case 48:
 YY_RULE_SETUP
-#line 91 "lex.l"
+#line 90 "lex.l"
 { 
                 insertIfNotExistsIDF(yytext, "STRING", "STRING", 0);
                 col += strlen(yytext);
                 yylval.str = strdup(yytext); return STRING_VAL; 
             }
 	YY_BREAK
+case 49:
+YY_RULE_SETUP
+#line 97 "lex.l"
+{ nb_ligne++; col = 1; }
+	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 98 "lex.l"
-{ nb_ligne++; col = 1; }
+{ col += yyleng; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 99 "lex.l"
-{ col += yyleng; }
+#line 100 "lex.l"
+{ printf("Lexical error at line %d, column %d: %s\n", nb_ligne, col, yytext); exit(1); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 101 "lex.l"
-{ printf("Lexical error at line %d, column %d: %s\n", nb_ligne, col, yytext); exit(1); }
-	YY_BREAK
-case 53:
-YY_RULE_SETUP
-#line 103 "lex.l"
+#line 102 "lex.l"
 ECHO;
 	YY_BREAK
-#line 987 "lex.yy.c"
+#line 982 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1869,4 +1864,4 @@ int main()
 	return 0;
 	}
 #endif
-#line 103 "lex.l"
+#line 102 "lex.l"
