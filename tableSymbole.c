@@ -7,6 +7,7 @@
 #define IDF_TABLE_SIZE 1000
 #define KEYWORD_TABLE_SIZE 100
 #define SEPARATOR_TABLE_SIZE 100
+#define VECTOR_TABLE_SIZE 100
 
 // Element structure for identifiers and constants
 typedef struct element {
@@ -17,6 +18,14 @@ typedef struct element {
     float val;              // value if the entity is a constant
     struct element* next;   // pointer to the next element (for collision handling)
 } element;
+
+typedef struct elmt {
+    int state;
+    char* name;
+    char* size;
+    char* type;
+    struct elmt* next;
+} elmt;
 
 // Element structure for keywords and separators
 typedef struct elt {
@@ -30,6 +39,7 @@ typedef struct elt {
 element* tabIdf[IDF_TABLE_SIZE];
 elt* tabKeyword[KEYWORD_TABLE_SIZE];
 elt* tabSep[SEPARATOR_TABLE_SIZE];
+elmt*tabVec[VECTOR_TABLE_SIZE];
 
 // Hash function
 unsigned int hash(char* str, int table_size) {
@@ -58,238 +68,298 @@ void initialization() {
     for (i = 0; i < SEPARATOR_TABLE_SIZE; i++) {
         tabSep[i] = NULL;
     }
-}
 
-// Insert entity into appropriate hash table
-void insert(char entity[], char code[], char type[], float val, int table_type) {
-    unsigned int index;
-    
-    switch (table_type) {
-        case 0: // Insert into identifiers and constants table
-            index = hash(entity, IDF_TABLE_SIZE);
-            
-            // Create new element
-            element* new_element = (element*)malloc(sizeof(element));
-            if (new_element == NULL) {
-                printf("Memory allocation failed\n");
-                return;
-            }
-            
-            new_element->state = 1;
-            new_element->name = strdup(entity);  // Use strdup to dynamically allocate memory
-            new_element->code = strdup(code);
-            new_element->type = strdup(type);
-            new_element->val = val;
-            new_element->next = NULL;
-            
-            // Insert at beginning of linked list
-            if (tabIdf[index] == NULL) {
-                tabIdf[index] = new_element;
-            } else {
-                new_element->next = tabIdf[index];
-                tabIdf[index] = new_element;
-            }
-            break;
-            
-        case 1: // Insert into keywords table
-            index = hash(entity, KEYWORD_TABLE_SIZE);
-            
-            // Create new element
-            elt* new_keyword = (elt*)malloc(sizeof(elt));
-            if (new_keyword == NULL) {
-                printf("Memory allocation failed\n");
-                return;
-            }
-            
-            new_keyword->state = 1;
-            new_keyword->name = strdup(entity);
-            new_keyword->type = strdup(code);
-            new_keyword->next = NULL;
-            
-            // Insert at beginning of linked list
-            if (tabKeyword[index] == NULL) {
-                tabKeyword[index] = new_keyword;
-            } else {
-                new_keyword->next = tabKeyword[index];
-                tabKeyword[index] = new_keyword;
-            }
-            break;
-            
-        case 2: // Insert into separators table
-            index = hash(entity, SEPARATOR_TABLE_SIZE);
-            
-            // Create new element
-            elt* new_sep = (elt*)malloc(sizeof(elt));
-            if (new_sep == NULL) {
-                printf("Memory allocation failed\n");
-                return;
-            }
-            
-            new_sep->state = 1;
-            new_sep->name = strdup(entity);
-            new_sep->type = strdup(code);
-            new_sep->next = NULL;
-            
-            // Insert at beginning of linked list
-            if (tabSep[index] == NULL) {
-                tabSep[index] = new_sep;
-            } else {
-                new_sep->next = tabSep[index];
-                tabSep[index] = new_sep;
-            }
-            break;
+    // Initialize vectors table
+    for (i = 0; i< VECTOR_TABLE_SIZE; i++) {
+        tabVec[i] = NULL;
     }
 }
 
-// Search if entity exists in appropriate hash table
-int search(char entity[], int table_type) {
-    unsigned int index;
-    
-    switch (table_type) {
-        case 0: // Search in identifiers and constants table
-            index = hash(entity, IDF_TABLE_SIZE);
-            element* current_idf = tabIdf[index];
-            
-            while (current_idf != NULL) {
-                if (strcmp(current_idf->name, entity) == 0) {
-                    return 1; // Found
-                }
-                current_idf = current_idf->next;
-            }
-            return 0; // Not found
-            
-        case 1: // Search in keywords table
-            index = hash(entity, KEYWORD_TABLE_SIZE);
-            elt* current_keyword = tabKeyword[index];
-            
-            while (current_keyword != NULL) {
-                if (strcmp(current_keyword->name, entity) == 0) {
-                    return 1; // Found
-                }
-                current_keyword = current_keyword->next;
-            }
-            return 0; // Not found
-            
-        case 2: // Search in separators table
-            index = hash(entity, SEPARATOR_TABLE_SIZE);
-            elt* current_sep = tabSep[index];
-            
-            while (current_sep != NULL) {
-                if (strcmp(current_sep->name, entity) == 0) {
-                    return 1; // Found
-                }
-                current_sep = current_sep->next;
-            }
-            return 0; // Not found
-    }
-    
-    return 0; // Default: not found
-}
+void insertIDF (char entity[], char code[], char type[], float val) {
+    unsigned int index = hash(entity, IDF_TABLE_SIZE);
+    element* new_element = (element*)malloc(sizeof(element));
+    new_element->name = strdup(entity);
+    new_element->code = strdup(code);
+    new_element->type = strdup(type);
+    new_element->val = val;
+    new_element->state = 1;
+    new_element->next = NULL;
 
-// Insert entity if it doesn't exist already
-void insertIfNotExists(char entity[], char code[], char type[], float val, int table_type) {
-    if (!search(entity, table_type)) {
-        insert(entity, code, type, val, table_type);
+    if (tabIdf[index] == NULL) {
+        tabIdf[index] = new_element;
     } else {
-        printf("Entity '%s' already exists in table %d\n", entity, table_type);
+        element* current = tabIdf[index];
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_element;
     }
 }
 
-// Display contents of all symbol tables
-void display() {
-    int i;
-    element* current_idf;
-    elt* current_keyword;
-    elt* current_sep;
-    
-    // Display identifiers and constants table
-    printf("/***************Table of symbols for Identifiers and Constants*************/\n");
-    printf("____________________________________________________________________\n");
-    printf("| Entity_Name |  Entity_Code | Entity_Type | Entity_Value\n");
-    printf("____________________________________________________________________\n");
-    
-    for (i = 0; i < IDF_TABLE_SIZE; i++) {
-        current_idf = tabIdf[i];
-        while (current_idf != NULL) {
-            printf("|%15s |%13s | %11s | %12.4f\n",
-                   current_idf->name, current_idf->code, current_idf->type, current_idf->val);
-            current_idf = current_idf->next;
-        }
+int searchSEPKEY(char entity[], int table_type) {
+    unsigned int index;
+    elt* current;
+
+    // Check in the appropriate table
+    if (table_type == 1) { // Keyword table
+        index = hash(entity, KEYWORD_TABLE_SIZE);
+        current = tabKeyword[index];
+    } else { // Separator table
+        index = hash(entity, SEPARATOR_TABLE_SIZE);
+        current = tabSep[index];
     }
-    
-    // Display keywords table
-    printf("\n/***************Table of symbols for Keywords*************/\n");
-    printf("_____________________________________\n");
-    printf("| Entity_Name |  Entity_Code | \n");
-    printf("_____________________________________\n");
-    
-    for (i = 0; i < KEYWORD_TABLE_SIZE; i++) {
-        current_keyword = tabKeyword[i];
-        while (current_keyword != NULL) {
-            printf("|%12s |%13s | \n", current_keyword->name, current_keyword->type);
-            current_keyword = current_keyword->next;
+
+    // Traverse the list to check if the entity already exists
+    while (current != NULL) {
+        if (strcmp(current->name, entity) == 0) {
+            return 1; // Found
         }
+        current = current->next;
     }
-    
-    // Display separators table
-    printf("\n/***************Table of symbols for Separators*************/\n");
-    printf("_____________________________________\n");
-    printf("| Entity_Name | Entity_Code | \n");
-    printf("_____________________________________\n");
-    
-    for (i = 0; i < SEPARATOR_TABLE_SIZE; i++) {
-        current_sep = tabSep[i];
-        while (current_sep != NULL) {
-            printf("|%12s |%13s | \n", current_sep->name, current_sep->type);
-            current_sep = current_sep->next;
+
+    return 0; // Not found
+}
+
+void insertSEPKEY(char entity[], char type[], int table_type) {
+    // Check if the keyword or separator already exists
+    if (!searchSEPKEY(entity, table_type)) {
+        unsigned int index;
+        elt* new_element = (elt*)malloc(sizeof(elt));
+        new_element->name = strdup(entity);
+        new_element->type = strdup(type);
+        new_element->state = 1;
+        new_element->next = NULL;
+
+        // Insert into the appropriate table
+        if (table_type == 1) { // Keyword table
+            index = hash(entity, KEYWORD_TABLE_SIZE);
+            if (tabKeyword[index] == NULL) {
+                tabKeyword[index] = new_element;
+            } else {
+                elt* current = tabKeyword[index];
+                while (current->next != NULL) {
+                    current = current->next;
+                }
+                current->next = new_element;
+            }
+        } else { // Separator table
+            index = hash(entity, SEPARATOR_TABLE_SIZE);
+            if (tabSep[index] == NULL) {
+                tabSep[index] = new_element;
+            } else {
+                elt* current = tabSep[index];
+                while (current->next != NULL) {
+                    current = current->next;
+                }
+                current->next = new_element;
+            }
         }
     }
 }
 
-// Free all allocated memory
+int searchVEC (char entity[]){
+    unsigned int index = hash(entity, VECTOR_TABLE_SIZE);
+    elmt* current = tabVec[index];
+
+    while (current != NULL) {
+        if(strcmp(current->name, entity) == 0) {
+            return 1;
+        }
+        current = current -> next;
+    }
+    return 0;
+}
+
+void insertVEC(char entity[], char type[], int size) {
+    if (!searchVEC(entity)) {
+        unsigned int index = hash(entity, VECTOR_TABLE_SIZE);
+        elmt* new_element = (elmt*)malloc(sizeof(elmt));
+        if (new_element == NULL) {
+            printf("Memory allocation error for vector %s\n", entity);
+            return;
+        }
+        new_element->state = 1; // you can use this field as needed
+        new_element->name = strdup(entity);
+        new_element->type = strdup(type);
+
+        // Store size as string for consistency with your struct
+        char size_str[20];
+        snprintf(size_str, sizeof(size_str), "%d", size);
+        new_element->size = strdup(size_str);
+
+        // Insert at the beginning of the list for simplicity
+        new_element->next = tabVec[index];
+        tabVec[index] = new_element;
+    }
+}
+
+int searchIDF (char entity[]) {
+    unsigned int index = hash(entity, IDF_TABLE_SIZE);
+    element* current = tabIdf[index];
+    
+    while (current != NULL) {
+        if (strcmp(current->name, entity) == 0) {
+            return 1; // Found
+        }
+        current = current->next;
+    }
+    return 0; // Not found
+}
+
+void insertIfNotExistsIDF (char entity[], char code[], char type[], float val) {
+    if (!searchIDF(entity)) {
+        insertIDF(entity, code, type, val);
+    }
+}
+
+int doubleDeclaration (char entity[]) {
+    if (searchIDF(entity)) {
+        return 1;
+    }
+    return 0;
+}
+
+// Get the type of a variable from the symbol table
+char* getVarType(char* name) {
+    unsigned int index = hash(name, IDF_TABLE_SIZE);
+    element* current = tabIdf[index];
+
+    while (current != NULL) {
+        if (strcmp(current->name, name) == 0) {
+            return current->type;  // Return the type of the variable
+        }
+        current = current->next;
+    }
+    return NULL;  // Variable not found
+}
+
+float getVarValue(char* name) {
+    unsigned int index = hash(name, IDF_TABLE_SIZE);
+    element* current = tabIdf[index];
+
+    while (current != NULL) {
+        if (strcmp(current->name, name) == 0) {
+            return current->val;
+        }
+        current = current->next;
+    }
+    return 0.0;  // Default to zero if not found
+}
+
+void updateIDFValue(char* name, float val) {
+    unsigned int index = hash(name, IDF_TABLE_SIZE);
+    element* current = tabIdf[index];
+    while (current != NULL) {
+        if (strcmp(current->name, name) == 0) {
+            current->val = val;
+            return;
+        }
+        current = current->next;
+    }
+}
+
+void afficher() {
+    // Print headers for Identifiers and Constants table
+    printf("\n+--------------------+--------------------+--------------------+-------------------+\n");
+    printf("| Name               | Code               | Type               | Value             |\n");
+    printf("+--------------------+--------------------+--------------------+-------------------+\n");
+    
+    // Display identifiers and constants in a table format
+    for (int i = 0; i < IDF_TABLE_SIZE; i++) {
+        element* current = tabIdf[i];
+        while (current != NULL) {
+            printf("| %-18s | %-18s | %-18s | %-17.2f |\n", current->name, current->code, current->type, current->val);
+            current = current->next;
+        }
+    }
+    
+    printf("+--------------------+--------------------+--------------------+-------------------+\n");
+
+    // Print headers for Vectors table
+    printf("\n+--------------------+--------------------+--------------------+\n");
+    printf("| Name               | Type               | Size               |\n");
+    printf("+--------------------+--------------------+--------------------+\n");
+
+    // Display vectors in a table format
+    for(int i = 0; i < VECTOR_TABLE_SIZE; i++) {
+        elmt* current = tabVec[i];
+        while (current != NULL) {
+            printf("| %-18s | %-18s | %-18s |\n", current ->name, current ->type , current ->size);
+            current = current ->next;
+        }
+    }
+
+    printf("+--------------------+--------------------+--------------------+\n");
+
+    // Print headers for Keywords table
+    printf("\n+--------------------+--------------------+\n");
+    printf("| Name               | Type               |\n");
+    printf("+--------------------+--------------------+\n");
+
+    // Display keywords in a table format
+    for (int i = 0; i < KEYWORD_TABLE_SIZE; i++) {
+        elt* current = tabKeyword[i];
+        while (current != NULL) {
+            printf("| %-18s | %-18s |\n", current->name, current->type);
+            current = current->next;
+        }
+    }
+
+    printf("+--------------------+--------------------+\n");
+
+    // Print headers for Separators table
+    printf("\n+--------------------+--------------------+\n");
+    printf("| Name               | Type               |\n");
+    printf("+--------------------+--------------------+\n");
+
+    // Display separators in a table format
+    for (int i = 0; i < SEPARATOR_TABLE_SIZE; i++) {
+        elt* current = tabSep[i];
+        while (current != NULL) {
+            printf("| %-18s | %-18s |\n", current->name, current->type);
+            current = current->next;
+        }
+    }
+
+    printf("+--------------------+--------------------+\n");
+}
+
+
 void freeAllTables() {
-    int i;
-    element* current_idf, *temp_idf;
-    elt* current_keyword, *temp_keyword;
-    elt* current_sep, *temp_sep;
-    
     // Free identifiers and constants table
-    for (i = 0; i < IDF_TABLE_SIZE; i++) {
-        current_idf = tabIdf[i];
-        while (current_idf != NULL) {
-            temp_idf = current_idf;
-            current_idf = current_idf->next;
-            free(temp_idf->name);
-            free(temp_idf->code);
-            free(temp_idf->type);
-            free(temp_idf);
+    for (int i = 0; i < IDF_TABLE_SIZE; i++) {
+        element* current = tabIdf[i];
+        while (current != NULL) {
+            element* temp = current;
+            current = current->next;
+            free(temp->name);
+            free(temp->code);
+            free(temp->type);
+            free(temp);
         }
-        tabIdf[i] = NULL;
     }
-    
+
     // Free keywords table
-    for (i = 0; i < KEYWORD_TABLE_SIZE; i++) {
-        current_keyword = tabKeyword[i];
-        while (current_keyword != NULL) {
-            temp_keyword = current_keyword;
-            current_keyword = current_keyword->next;
-            free(temp_keyword->name);
-            free(temp_keyword->type);
-            free(temp_keyword);
+    for (int i = 0; i < KEYWORD_TABLE_SIZE; i++) {
+        elt* current = tabKeyword[i];
+        while (current != NULL) {
+            elt* temp = current;
+            current = current->next;
+            free(temp->name);
+            free(temp->type);
+            free(temp);
         }
-        tabKeyword[i] = NULL;
     }
-    
+
     // Free separators table
-    for (i = 0; i < SEPARATOR_TABLE_SIZE; i++) {
-        current_sep = tabSep[i];
-        while (current_sep != NULL) {
-            temp_sep = current_sep;
-            current_sep = current_sep->next;
-            free(temp_sep->name);
-            free(temp_sep->type);
-            free(temp_sep);
+    for (int i = 0; i < SEPARATOR_TABLE_SIZE; i++) {
+        elt* current = tabSep[i];
+        while (current != NULL) {
+            elt* temp = current;
+            current = current->next;
+            free(temp->name);
+            free(temp->type);
+            free(temp);
         }
-        tabSep[i] = NULL;
     }
 }

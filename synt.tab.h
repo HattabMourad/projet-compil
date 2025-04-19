@@ -49,43 +49,44 @@
      CONST = 265,
      READ = 266,
      DISPLAY = 267,
-     IDF = 268,
-     INTEGER_VAL = 269,
-     FLOAT_VAL = 270,
-     CHAR_VAL = 271,
-     STRING_VAL = 272,
-     INTEGER = 273,
-     FLOAT = 274,
-     CHAR = 275,
-     STRING = 276,
-     LPAREN = 277,
-     RPAREN = 278,
-     LBRACKET = 279,
-     RBRACKET = 280,
-     COLON = 281,
-     COMMA = 282,
-     PVG = 283,
-     EGAL = 284,
-     BARV = 285,
-     ADR = 286,
-     FORMAT_DOLLAR = 287,
-     FORMAT_PERCENT = 288,
-     FORMAT_HASH = 289,
-     FORMAT_AMP = 290,
-     NOT = 291,
-     POINT = 292,
-     DI = 293,
-     EQ = 294,
-     LT = 295,
-     GT = 296,
-     LE = 297,
-     GE = 298,
-     AND = 299,
-     OR = 300,
-     DIV = 301,
-     MULT = 302,
-     MINUS = 303,
-     PLUS = 304
+     QUOTES = 268,
+     IDF = 269,
+     INTEGER_VAL = 270,
+     FLOAT_VAL = 271,
+     CHAR_VAL = 272,
+     STRING_VAL = 273,
+     INTEGER = 274,
+     FLOAT = 275,
+     CHAR = 276,
+     STRING = 277,
+     LPAREN = 278,
+     RPAREN = 279,
+     LBRACKET = 280,
+     RBRACKET = 281,
+     COLON = 282,
+     COMMA = 283,
+     PVG = 284,
+     EGAL = 285,
+     BARV = 286,
+     ADR = 287,
+     FORMAT_DOLLAR = 288,
+     FORMAT_PERCENT = 289,
+     FORMAT_HASH = 290,
+     FORMAT_AMP = 291,
+     NOT = 292,
+     POINT = 293,
+     DI = 294,
+     EQ = 295,
+     LT = 296,
+     GT = 297,
+     LE = 298,
+     GE = 299,
+     AND = 300,
+     OR = 301,
+     DIV = 302,
+     MULT = 303,
+     MINUS = 304,
+     PLUS = 305
    };
 #endif
 
@@ -96,16 +97,22 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 13 "synt.y"
+#line 15 "synt.y"
 
-  int entier;
+  char* strVal;
+  float floatVal;
+  int   entier;
   char* str;
   float reel;
+  struct {
+    char* type;
+    float val;
+  } exprAttr;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 109 "synt.tab.h"
+#line 116 "synt.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

@@ -1,8 +1,11 @@
 MyProg
 DATA
-    INTEGER: A | B | C;
+    INTEGER: A;
+    INTEGER: B;
+    INTEGER: C;
     FLOAT: X;
     VECTOR: Tab[0, 10: INTEGER];
+    VECTOR: Tab1[0, 50: FLOAT];
     CONST: Pi = 3.14;
 END
 
@@ -12,10 +15,11 @@ CODE
     C = A * B;
     X = 3.14;
 
-    READ("$": @X);
+    READ("$": @A);
+    READ("$": @B);
 
-    DISPLAY("Value of A: $" : A);
-    DISPLAY("Value of B: $" : B);
+    DISPLAY("Value of A $": A);
+    DISPLAY("Value of B $": B);
 
     IF (A.GE.10.AND.B.LT.5):
         B = B + 1;

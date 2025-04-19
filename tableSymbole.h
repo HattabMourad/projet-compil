@@ -1,25 +1,27 @@
-#ifndef TABLE_SYMBOLE_H
-#define TABLE_SYMBOLE_H
+#ifndef TABLESYMBOLE_H
+#define TABLESYMBOLE_H
 
-// Initialize all symbol tables
+
+// === Initialization ===
 void initialization();
 
-// Insert an entity into the appropriate symbol table
-void insert(char entity[], char code[], char type[], float val, int table_type);
+// === Insertions ===
+void insertIDF (char entity[], char code[], char type[], float val);
+void insertSEPKEY (char entity[], char type[], int table_type);
+void insertIfNotExistsIDF (char entity[], char code[], char type[], float val);
+void insertVEC(char entity[], char type[], int size);
 
-// Search if an entity exists in a given symbol table (0: not found, 1: found)
-int search(char entity[], int table_type);
+// === Lookups ===
+int searchIDF (char entity[]);
+int searchVEC (char entity[]);
+int doubleDeclaration (char entity[]);
+char* getVarType(char* name);
+float getVarValue(char* name);
+void updateIDFValue(char* name, float val);
 
-// Search and return an identifier (returns NULL if not found)
-struct element* searchIdf(char entity[]);
+// === Display ===
+void afficher();
 
-// Insert if the entity does not already exist
-void insertIfNotExists(char entity[], char code[], char type[], float val, int table_type);
-
-// Display all symbol tables
-void display();
-
-// Free all dynamically allocated memory in the symbol tables
 void freeAllTables();
 
-#endif // TABLE_SYMBOLE_H
+#endif // TABLESYMBOLE_H

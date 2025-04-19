@@ -285,24 +285,24 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 52
-#define YY_END_OF_BUFFER 53
+#define YY_NUM_RULES 53
+#define YY_END_OF_BUFFER 54
 static yyconst short int yy_accept[127] =
     {   0,
-        0,    0,   53,   51,   50,   49,   51,   51,   24,   25,
-       37,   35,   29,   36,   34,   38,   45,   28,   30,   31,
-       33,   44,   44,   44,   44,   44,   44,   44,   44,   44,
-       44,   44,   44,   44,   44,   26,   27,   32,   51,   50,
-        0,   48,    0,    0,    0,    0,    0,    0,    0,    0,
-       45,   44,   44,   44,   44,   44,   23,   44,   44,   22,
-       44,   44,   18,   20,   12,   44,   19,   21,   44,   15,
-       44,   44,   44,   43,   41,   39,   40,   42,   47,   46,
-       44,   16,   44,   44,   44,   44,   44,   44,    3,   44,
-       14,   44,   17,   44,   44,   44,   43,   44,   10,    2,
+        0,    0,   54,   52,   51,   50,   39,   52,   24,   25,
+       37,   35,   29,   36,   34,   38,   46,   28,   30,   31,
+       33,   45,   45,   45,   45,   45,   45,   45,   45,   45,
+       45,   45,   45,   45,   45,   26,   27,   32,   52,   51,
+        0,   49,    0,    0,    0,    0,    0,    0,    0,    0,
+       46,   45,   45,   45,   45,   45,   23,   45,   45,   22,
+       45,   45,   18,   20,   12,   45,   19,   21,   45,   15,
+       45,   45,   45,   44,   42,   40,   41,   43,   48,   47,
+       45,   16,   45,   45,   45,   45,   45,   45,    3,   45,
+       14,   45,   17,   45,   45,   45,   44,   45,   10,    2,
 
-       44,    1,   44,   13,   44,   44,    6,   44,   44,   44,
-        5,   44,    9,   44,   44,   44,   44,   44,   44,   11,
-        4,   44,    7,    8,   44,    0
+       45,    1,   45,   13,   45,   45,    6,   45,   45,   45,
+        5,   45,    9,   45,   45,   45,   45,   45,   45,   11,
+        4,   45,    7,    8,   45,    0
     } ;
 
 static yyconst int yy_ec[256] =
@@ -455,14 +455,13 @@ char *yytext;
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "synt.tab.h"
 #include "tableSymbole.h"
-
-extern int yylval;
+#include "synt.tab.h"
 
 int nb_ligne = 1;
 int col = 1;
-#line 466 "lex.yy.c"
+extern YYSTYPE yylval;
+#line 465 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -613,10 +612,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 22 "lex.l"
+#line 21 "lex.l"
 
 
-#line 620 "lex.yy.c"
+#line 619 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -701,265 +700,290 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 24 "lex.l"
-{ insertIfNotExists(yytext, "DATA", "Keyword", 0, 1); return DATA; }
+#line 23 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col ++; return DATA; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 25 "lex.l"
-{ insertIfNotExists(yytext, "CODE", "Keyword", 0, 1); return CODE; }
+#line 24 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); return CODE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 26 "lex.l"
-{ insertIfNotExists(yytext, "END", "Keyword", 0, 1); return END; }
+#line 25 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); return END; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 27 "lex.l"
-{ insertIfNotExists(yytext, "VECTOR", "Keyword", 0, 1); return VECTOR; }
+#line 26 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); return VECTOR; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 28 "lex.l"
-{ insertIfNotExists(yytext, "CONST", "Keyword", 0, 1); return CONST; }
+#line 27 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); return CONST; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 29 "lex.l"
-{ insertIfNotExists(yytext, "READ", "Keyword", 0, 1); return READ; }
+#line 28 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); return READ; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 30 "lex.l"
-{ insertIfNotExists(yytext, "DISPLAY", "Keyword", 0, 1); return DISPLAY; }
+#line 29 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); return DISPLAY; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 31 "lex.l"
-{ insertIfNotExists(yytext, "INTEGER", "Keyword", 0, 1); return INTEGER; }
+#line 30 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); yylval.str = strdup("INTEGER"); return INTEGER; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 32 "lex.l"
-{ insertIfNotExists(yytext, "FLOAT", "Keyword", 0, 1); return FLOAT; }
+#line 31 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); yylval.str = strdup("FLOAT"); return FLOAT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 33 "lex.l"
-{ insertIfNotExists(yytext, "CHAR", "Keyword", 0, 1); return CHAR; }
+#line 32 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); yylval.str = strdup("CHAR"); return CHAR; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 34 "lex.l"
-{ insertIfNotExists(yytext, "STRING", "Keyword", 0, 1); return STRING; }
+#line 33 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); yylval.str = strdup("STRING"); return STRING; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 35 "lex.l"
-{ insertIfNotExists(yytext, "IF", "Keyword", 0, 1); return IF; }
+#line 34 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); return IF; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 36 "lex.l"
-{ insertIfNotExists(yytext, "ELSE", "Keyword", 0, 1); return ELSE; }
+#line 35 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); return ELSE; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 37 "lex.l"
-{ insertIfNotExists(yytext, "FOR", "Keyword", 0, 1); return FOR; }
+#line 36 "lex.l"
+{ insertSEPKEY(yytext, "KEYWORD", 1); col += strlen(yytext); return FOR; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 38 "lex.l"
-{ insertIfNotExists(yytext, "OR", "Keyword", 0, 1); return OR; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return OR; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 39 "lex.l"
-{ insertIfNotExists(yytext, "AND", "Keyword", 0, 1); return AND; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return AND; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 40 "lex.l"
-{ insertIfNotExists(yytext, "NOT", "Keyword", 0, 1); return NOT; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return NOT; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 41 "lex.l"
-{ insertIfNotExists(yytext, "GE", "Keyword", 0, 1); return GE; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return GE; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 42 "lex.l"
-{ insertIfNotExists(yytext, "LE", "Keyword", 0, 1); return LE; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return LE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 43 "lex.l"
-{ insertIfNotExists(yytext, "GT", "Keyword", 0, 1); return GT; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return GT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 44 "lex.l"
-{ insertIfNotExists(yytext, "LT", "Keyword", 0, 1); return LT; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return LT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 45 "lex.l"
-{ insertIfNotExists(yytext, "EQ", "Keyword", 0, 1); return EQ; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return EQ; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 46 "lex.l"
-{ insertIfNotExists(yytext, "DI", "Keyword", 0, 1); return DI; }
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return DI; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 48 "lex.l"
-{ insertIfNotExists(yytext, "LPAREN", "Separator", 0, 2); return LPAREN; }
+#line 47 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return LPAREN; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 49 "lex.l"
-{ insertIfNotExists(yytext, "RPAREN", "Separator", 0, 2); return RPAREN; }
+#line 48 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return RPAREN; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 50 "lex.l"
-{ insertIfNotExists(yytext, "LBRACKET", "Separator", 0, 2); return LBRACKET; }
+#line 49 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return LBRACKET; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 51 "lex.l"
-{ insertIfNotExists(yytext, "RBRACKET", "Separator", 0, 2); return RBRACKET; }
+#line 50 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return RBRACKET; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 52 "lex.l"
-{ insertIfNotExists(yytext, "COLON", "Separator", 0, 2); return COLON; }
+#line 51 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return COLON; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 53 "lex.l"
-{ insertIfNotExists(yytext, "COMMA", "Separator", 0, 2); return COMMA; }
+#line 52 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return COMMA; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 54 "lex.l"
-{ insertIfNotExists(yytext, "PVG", "Separator", 0, 2); return PVG; }
+#line 53 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return PVG; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 55 "lex.l"
-{ insertIfNotExists(yytext, "EGAL", "Separator", 0, 2); return EGAL; }
+#line 54 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return EGAL; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 56 "lex.l"
-{ insertIfNotExists(yytext, "BARV", "Separator", 0, 2); return BARV; }
+#line 55 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return BARV; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 57 "lex.l"
-{ insertIfNotExists(yytext, "ADR", "Separator", 0, 2); return ADR; }
+#line 56 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return ADR; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 58 "lex.l"
-{ insertIfNotExists(yytext, "POINT", "Separator", 0, 2); return POINT; }
+#line 57 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return POINT; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 60 "lex.l"
-{ insertIfNotExists(yytext, "PLUS", "Separator", 0, 2); return PLUS; }
+#line 59 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return PLUS; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 61 "lex.l"
-{ insertIfNotExists(yytext, "MINUS", "Separator", 0, 2); return MINUS; }
+#line 60 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return MINUS; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 62 "lex.l"
-{ insertIfNotExists(yytext, "MULT", "Separator", 0, 2); return MULT; }
+#line 61 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return MULT; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 63 "lex.l"
-{ insertIfNotExists(yytext, "DIV", "Separator", 0, 2); return DIV; }
+#line 62 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return DIV; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 65 "lex.l"
-{ insertIfNotExists(yytext, "FORMAT_DOLLAR", "Separator", 0, 2); return FORMAT_DOLLAR; }
+#line 63 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return QUOTES; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 66 "lex.l"
-{ insertIfNotExists(yytext, "FORMAT_PERCENT", "Separator", 0, 2); return FORMAT_PERCENT; }
+#line 64 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_DOLLAR; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 67 "lex.l"
-{ insertIfNotExists(yytext, "FORMAT_HASH", "Separator", 0, 2); return FORMAT_HASH; }
+#line 65 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_PERCENT; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 68 "lex.l"
-{ insertIfNotExists(yytext, "FORMAT_AMP", "Separator", 0, 2); return FORMAT_AMP; }
+#line 66 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_HASH; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 70 "lex.l"
-{ /* Comment line: skip */ }
+#line 67 "lex.l"
+{ insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_AMP; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 72 "lex.l"
-{ insertIfNotExists(yytext, "IDF", "Identifier", 0, 0); return IDF; }
+#line 69 "lex.l"
+{ /* Comment line: skip */ }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 73 "lex.l"
-{ insertIfNotExists(yytext, "INTEGER_VAL", "Integer", atof(yytext), 0); return INTEGER_VAL; }
+#line 71 "lex.l"
+{  
+                col += strlen(yytext); 
+                yylval.str = strdup(yytext);
+                return IDF; 
+            }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 74 "lex.l"
-{ insertIfNotExists(yytext, "FLOAT_VAL", "Float", atof(yytext), 0); return FLOAT_VAL; }
+#line 76 "lex.l"
+{ 
+                insertIfNotExistsIDF(yytext, "CONST", "INTEGER", atoi(yytext));
+                col += strlen(yytext);
+                yylval.entier = atoi(yytext); return INTEGER_VAL; 
+            }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 75 "lex.l"
-{ insertIfNotExists(yytext, "CHAR_VAL", "Char", 0, 0); return CHAR_VAL; }
+#line 81 "lex.l"
+{
+                insertIfNotExistsIDF(yytext, "CONST", "FLOAT", atof(yytext));
+                col += strlen(yytext);
+                yylval.reel = atof(yytext); return FLOAT_VAL; 
+            }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 76 "lex.l"
-{ insertIfNotExists(yytext, "STRING_VAL", "String", 0, 0); return STRING_VAL; }
+#line 86 "lex.l"
+{ 
+                insertIfNotExistsIDF(yytext, "", "CHAR", yytext[1]);
+                col += strlen(yytext);
+                return CHAR_VAL;
+            }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 78 "lex.l"
-{ nb_ligne++; col = 1; }
+#line 91 "lex.l"
+{ 
+                insertIfNotExistsIDF(yytext, "STRING", "STRING", 0);
+                col += strlen(yytext);
+                yylval.str = strdup(yytext); return STRING_VAL; 
+            }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 79 "lex.l"
-{ col += yyleng; }
+#line 98 "lex.l"
+{ nb_ligne++; col = 1; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 81 "lex.l"
-{ printf("Lexical error at line %d, column %d: %s\n", nb_ligne, col, yytext); exit(1); }
+#line 99 "lex.l"
+{ col += yyleng; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 83 "lex.l"
+#line 101 "lex.l"
+{ printf("Lexical error at line %d, column %d: %s\n", nb_ligne, col, yytext); exit(1); }
+	YY_BREAK
+case 53:
+YY_RULE_SETUP
+#line 103 "lex.l"
 ECHO;
 	YY_BREAK
-#line 963 "lex.yy.c"
+#line 987 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1845,4 +1869,4 @@ int main()
 	return 0;
 	}
 #endif
-#line 83 "lex.l"
+#line 103 "lex.l"
