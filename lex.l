@@ -60,7 +60,6 @@ STRING  \"([^\"\\]|\\.)*\"
 "-"         { insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return MINUS; }
 "*"         { insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return MULT; }
 "/"         { insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return DIV; }
-\"          { insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return QUOTES; }
 "\"$\""     { insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_DOLLAR; }
 "\"%\""     { insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_PERCENT; }
 "\"#\""     { insertSEPKEY(yytext, "SEPARATOR", 2); col += strlen(yytext); return FORMAT_HASH; }
