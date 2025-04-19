@@ -74,6 +74,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tableSymbole.h"
+#include "quads.h"
+#include "codegen.h"
 
 extern int nb_ligne;
 extern int col;
@@ -82,9 +84,18 @@ void yyerror(const char *s);
 int yylex();
 char* currentType = NULL;
 
+// Helper for temporary variable naming
+typedef struct { int count; } TempVarGen;
+TempVarGen tempGen = {0};
+char* newTemp() {
+    static char buffer[32];
+    sprintf(buffer, "T%d", tempGen.count++);
+    return buffer;
+}
+
 
 /* Line 189 of yacc.c  */
-#line 88 "synt.tab.c"
+#line 99 "synt.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -168,7 +179,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 15 "synt.y"
+#line 26 "synt.y"
 
   int   entier;
   int   boolVal;
@@ -177,12 +188,13 @@ typedef union YYSTYPE
   struct {
     char* type;
     float val;
+    char result[32];
   } exprAttr;
 
 
 
 /* Line 214 of yacc.c  */
-#line 186 "synt.tab.c"
+#line 198 "synt.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -194,7 +206,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 198 "synt.tab.c"
+#line 210 "synt.tab.c"
 
 #ifdef short
 # undef short
@@ -505,12 +517,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    47,    47,    52,    53,    57,    58,    59,    60,    64,
-      68,    73,    81,    86,    94,    95,    96,    97,   101,   102,
-     106,   107,   108,   109,   110,   114,   131,   132,   136,   156,
-     157,   158,   159,   163,   164,   165,   169,   170,   171,   172,
-     176,   208,   233,   242,   251,   263,   264,   269,   273,   289,
-     290,   291,   292,   293,   294,   298,   316
+       0,    59,    59,    64,    65,    69,    70,    71,    72,    76,
+      80,    85,    93,    98,   106,   107,   108,   109,   113,   114,
+     118,   119,   120,   121,   122,   126,   144,   145,   150,   173,
+     174,   175,   176,   180,   181,   182,   186,   187,   188,   189,
+     193,   225,   250,   259,   268,   280,   281,   286,   290,   306,
+     307,   308,   309,   310,   311,   315,   333
 };
 #endif
 
@@ -1504,42 +1516,42 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 48 "synt.y"
+#line 60 "synt.y"
     { printf("Program parsed successfully!\n"); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 57 "synt.y"
+#line 69 "synt.y"
     { currentType = (yyvsp[(1) - (1)].str); (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 58 "synt.y"
+#line 70 "synt.y"
     { currentType = (yyvsp[(1) - (1)].str); (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 59 "synt.y"
+#line 71 "synt.y"
     { currentType = (yyvsp[(1) - (1)].str); (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 60 "synt.y"
+#line 72 "synt.y"
     { currentType = (yyvsp[(1) - (1)].str); (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 65 "synt.y"
+#line 77 "synt.y"
     {
         currentType = NULL;
       ;}
@@ -1548,7 +1560,7 @@ yyreduce:
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 69 "synt.y"
+#line 81 "synt.y"
     {
         if(searchVEC((yyvsp[(3) - (11)].str))) { printf ("Error on line %d: Vector %s already exists /n", nb_ligne, (yyvsp[(3) - (11)].str)); }
         else { insertVEC((yyvsp[(3) - (11)].str), (yyvsp[(9) - (11)].str), (yyvsp[(7) - (11)].entier)); }
@@ -1558,7 +1570,7 @@ yyreduce:
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 74 "synt.y"
+#line 86 "synt.y"
     {
         if(doubleDeclaration((yyvsp[(3) - (6)].str))) { printf("Error on line %d: Variable %s already declared\n", nb_ligne, (yyvsp[(3) - (6)].str)); }
         else {insertIfNotExistsIDF((yyvsp[(3) - (6)].str), "CONST", currentType, (yyvsp[(5) - (6)].exprAttr).val); }
@@ -1568,7 +1580,7 @@ yyreduce:
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 82 "synt.y"
+#line 94 "synt.y"
     {
         if(doubleDeclaration((yyvsp[(3) - (3)].str))){ printf("Error on line %d: Variable %s already declared\n", nb_ligne, (yyvsp[(3) - (3)].str)); }
         else {insertIfNotExistsIDF((yyvsp[(3) - (3)].str), "IDF", currentType, 0); }
@@ -1578,7 +1590,7 @@ yyreduce:
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 87 "synt.y"
+#line 99 "synt.y"
     {
         if(doubleDeclaration((yyvsp[(1) - (1)].str))){ printf("Error on line %d: Variable %s already declared\n", nb_ligne, (yyvsp[(1) - (1)].str)); }
         else {insertIfNotExistsIDF((yyvsp[(1) - (1)].str), "IDF", currentType, 0); }
@@ -1588,35 +1600,35 @@ yyreduce:
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 94 "synt.y"
-    { (yyval.exprAttr).type = "INTEGER"; (yyval.exprAttr).val = (yyvsp[(1) - (1)].entier); ;}
+#line 106 "synt.y"
+    { (yyval.exprAttr).type = "INTEGER"; (yyval.exprAttr).val = (yyvsp[(1) - (1)].entier); strcpy((yyval.exprAttr).result, ""); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 95 "synt.y"
-    { (yyval.exprAttr).type = "FLOAT";   (yyval.exprAttr).val = (yyvsp[(1) - (1)].reel); ;}
+#line 107 "synt.y"
+    { (yyval.exprAttr).type = "FLOAT";   (yyval.exprAttr).val = (yyvsp[(1) - (1)].reel); strcpy((yyval.exprAttr).result, ""); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 96 "synt.y"
-    { (yyval.exprAttr).type = "CHAR";    (yyval.exprAttr).val = (yyvsp[(1) - (1)].reel); ;}
+#line 108 "synt.y"
+    { (yyval.exprAttr).type = "CHAR";    (yyval.exprAttr).val = (yyvsp[(1) - (1)].reel); strcpy((yyval.exprAttr).result, ""); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 97 "synt.y"
-    { (yyval.exprAttr).type = "STRING";  (yyval.exprAttr).val = 0;  ;}
+#line 109 "synt.y"
+    { (yyval.exprAttr).type = "STRING";  (yyval.exprAttr).val = 0;  strcpy((yyval.exprAttr).result, ""); ;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 115 "synt.y"
+#line 127 "synt.y"
     {
         char* type1 = getVarType((yyvsp[(1) - (4)].str));
         char* type2 = (yyvsp[(3) - (4)].exprAttr).type;
@@ -1628,6 +1640,7 @@ yyreduce:
         }
         else {
             updateIDFValue((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].exprAttr).val);
+            addQuad("=", (yyvsp[(3) - (4)].exprAttr).result[0] ? (yyvsp[(3) - (4)].exprAttr).result : "", "", (yyvsp[(1) - (4)].str));
         }
       ;}
     break;
@@ -1635,30 +1648,34 @@ yyreduce:
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 131 "synt.y"
-    { (yyval.exprAttr).type = (yyvsp[(1) - (1)].exprAttr).type; (yyval.exprAttr).val = (yyvsp[(1) - (1)].exprAttr).val; ;}
+#line 144 "synt.y"
+    { (yyval.exprAttr).type = (yyvsp[(1) - (1)].exprAttr).type; (yyval.exprAttr).val = (yyvsp[(1) - (1)].exprAttr).val; strcpy((yyval.exprAttr).result, ""); ;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 132 "synt.y"
+#line 145 "synt.y"
     { 
         (yyval.exprAttr).type = getVarType((yyvsp[(1) - (1)].str)); 
         (yyval.exprAttr).val = getVarValue((yyvsp[(1) - (1)].str)); 
+        strncpy((yyval.exprAttr).result, (yyvsp[(1) - (1)].str), 31); (yyval.exprAttr).result[31] = '\0';
       ;}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 136 "synt.y"
+#line 150 "synt.y"
     {
         if (strcmp((yyvsp[(1) - (3)].exprAttr).type, (yyvsp[(3) - (3)].exprAttr).type) != 0) {
             printf("Type mismatch in expression on line %d\n", nb_ligne);
             exit(1);
         }
         (yyval.exprAttr).type = (yyvsp[(1) - (3)].exprAttr).type;
+        char* temp = newTemp();
+        addQuad((yyvsp[(2) - (3)].str), (yyvsp[(1) - (3)].exprAttr).result[0] ? (yyvsp[(1) - (3)].exprAttr).result : "", (yyvsp[(3) - (3)].exprAttr).result[0] ? (yyvsp[(3) - (3)].exprAttr).result : "", temp);
+        strcpy((yyval.exprAttr).result, temp);
         if (strcmp((yyvsp[(2) - (3)].str), "+") == 0) (yyval.exprAttr).val = (yyvsp[(1) - (3)].exprAttr).val + (yyvsp[(3) - (3)].exprAttr).val;
         else if (strcmp((yyvsp[(2) - (3)].str), "-") == 0) (yyval.exprAttr).val = (yyvsp[(1) - (3)].exprAttr).val - (yyvsp[(3) - (3)].exprAttr).val;
         else if (strcmp((yyvsp[(2) - (3)].str), "*") == 0) (yyval.exprAttr).val = (yyvsp[(1) - (3)].exprAttr).val * (yyvsp[(3) - (3)].exprAttr).val;
@@ -1675,84 +1692,84 @@ yyreduce:
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 156 "synt.y"
+#line 173 "synt.y"
     { (yyval.str) = "+"; ;}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 157 "synt.y"
+#line 174 "synt.y"
     { (yyval.str) = "-"; ;}
     break;
 
   case 31:
 
 /* Line 1455 of yacc.c  */
-#line 158 "synt.y"
+#line 175 "synt.y"
     { (yyval.str) = "*"; ;}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 159 "synt.y"
+#line 176 "synt.y"
     { (yyval.str) = "/"; ;}
     break;
 
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 163 "synt.y"
+#line 180 "synt.y"
     { (yyval.str) = "OR"; ;}
     break;
 
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 164 "synt.y"
+#line 181 "synt.y"
     { (yyval.str) = "AND"; ;}
     break;
 
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 165 "synt.y"
+#line 182 "synt.y"
     { (yyval.str) = "NOT"; ;}
     break;
 
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 169 "synt.y"
+#line 186 "synt.y"
     { (yyval.str) = "$"; ;}
     break;
 
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 170 "synt.y"
+#line 187 "synt.y"
     { (yyval.str) = "%"; ;}
     break;
 
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 171 "synt.y"
+#line 188 "synt.y"
     { (yyval.str) = "#"; ;}
     break;
 
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 172 "synt.y"
+#line 189 "synt.y"
     { (yyval.str) = "&"; ;}
     break;
 
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 177 "synt.y"
+#line 194 "synt.y"
     {
         char* idf_type = getVarType((yyvsp[(6) - (8)].str));
         if (strcmp((yyvsp[(3) - (8)].str), "$") == 0) {
@@ -1786,7 +1803,7 @@ yyreduce:
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 209 "synt.y"
+#line 226 "synt.y"
     {
         char* str = (yyvsp[(3) - (7)].str);
         int len = strlen(str);
@@ -1816,7 +1833,7 @@ yyreduce:
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 234 "synt.y"
+#line 251 "synt.y"
     {
         char* phrase = (yyvsp[(3) - (5)].str) + 1;
         phrase[strlen(phrase) - 1] = '\0';
@@ -1827,7 +1844,7 @@ yyreduce:
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 243 "synt.y"
+#line 260 "synt.y"
     {
         if ((yyvsp[(3) - (10)].boolVal)) {
             printf("IF condition true, executing first block\n");
@@ -1841,7 +1858,7 @@ yyreduce:
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 252 "synt.y"
+#line 269 "synt.y"
     {
         if ((yyvsp[(3) - (7)].boolVal)) {
             printf("IF condition true, executing block\n");
@@ -1855,14 +1872,14 @@ yyreduce:
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 263 "synt.y"
+#line 280 "synt.y"
     { (yyval.boolVal) = (yyvsp[(1) - (1)].boolVal); ;}
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 265 "synt.y"
+#line 282 "synt.y"
     {
         if (strcmp((yyvsp[(3) - (5)].str), "AND") == 0) (yyval.boolVal) = (yyvsp[(1) - (5)].boolVal) && (yyvsp[(5) - (5)].boolVal);
         else if (strcmp((yyvsp[(3) - (5)].str), "OR") == 0) (yyval.boolVal) = (yyvsp[(1) - (5)].boolVal) || (yyvsp[(5) - (5)].boolVal);
@@ -1872,14 +1889,14 @@ yyreduce:
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 269 "synt.y"
+#line 286 "synt.y"
     { (yyval.boolVal) = !(yyvsp[(3) - (3)].boolVal); ;}
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 274 "synt.y"
+#line 291 "synt.y"
     {
         if (strcmp((yyvsp[(3) - (5)].str), "GT") == 0)  (yyval.boolVal) = ((yyvsp[(1) - (5)].exprAttr).val > (yyvsp[(5) - (5)].exprAttr).val);
         else if (strcmp((yyvsp[(3) - (5)].str), "LT") == 0) (yyval.boolVal) = ((yyvsp[(1) - (5)].exprAttr).val < (yyvsp[(5) - (5)].exprAttr).val);
@@ -1897,49 +1914,49 @@ yyreduce:
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 289 "synt.y"
+#line 306 "synt.y"
     { (yyval.str) = "GT"; ;}
     break;
 
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 290 "synt.y"
+#line 307 "synt.y"
     { (yyval.str) = "LT"; ;}
     break;
 
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 291 "synt.y"
+#line 308 "synt.y"
     { (yyval.str) = "GE"; ;}
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 292 "synt.y"
+#line 309 "synt.y"
     { (yyval.str) = "LE"; ;}
     break;
 
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 293 "synt.y"
+#line 310 "synt.y"
     { (yyval.str) = "EQ"; ;}
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 294 "synt.y"
+#line 311 "synt.y"
     { (yyval.str) = "DI"; ;}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 299 "synt.y"
+#line 316 "synt.y"
     { 
         insertIfNotExistsIDF((yyvsp[(3) - (10)].str), "IDF", "INTEGER", 0);
         char* idf_type = getVarType((yyvsp[(7) - (10)].str));
@@ -1962,7 +1979,7 @@ yyreduce:
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 317 "synt.y"
+#line 334 "synt.y"
     { 
         insertIfNotExistsIDF((yyvsp[(3) - (10)].str), "IDF", "INTEGER", 0);
         int start = (yyvsp[(5) - (10)].entier);
@@ -1980,7 +1997,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 1984 "synt.tab.c"
+#line 2001 "synt.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2192,7 +2209,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 331 "synt.y"
+#line 348 "synt.y"
 
 
 void yyerror(const char *s) {
@@ -2218,6 +2235,8 @@ int main(int argc, char *argv[]) {
     
     if (yyparse() == 0) {
         afficher();
+        printQuads();
+        generateAssembly("output.asm");
     }
     
     freeAllTables();

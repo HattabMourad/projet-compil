@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tableSymbole.h"
+#include "quads.h"
+#include "codegen.h"
 
 extern int nb_ligne;
 extern int col;
@@ -10,6 +12,15 @@ extern FILE* yyin;
 void yyerror(const char *s);
 int yylex();
 char* currentType = NULL;
+
+// Helper for temporary variable naming
+typedef struct { int count; } TempVarGen;
+TempVarGen tempGen = {0};
+char* newTemp() {
+    static char buffer[32];
+    sprintf(buffer, "T%d", tempGen.count++);
+    return buffer;
+}
 %}
 
 %union {
@@ -20,6 +31,7 @@ char* currentType = NULL;
   struct {
     char* type;
     float val;
+    char result[32];
   } exprAttr;
 }
 
@@ -91,10 +103,10 @@ list_variables:
     ;
 
 constant:
-      INTEGER_VAL { $$.type = "INTEGER"; $$.val = $1; }
-    | FLOAT_VAL   { $$.type = "FLOAT";   $$.val = $1; }
-    | CHAR_VAL    { $$.type = "CHAR";    $$.val = $1; }
-    | STRING_VAL  { $$.type = "STRING";  $$.val = 0;  }
+      INTEGER_VAL { $$.type = "INTEGER"; $$.val = $1; strcpy($$.result, ""); }
+    | FLOAT_VAL   { $$.type = "FLOAT";   $$.val = $1; strcpy($$.result, ""); }
+    | CHAR_VAL    { $$.type = "CHAR";    $$.val = $1; strcpy($$.result, ""); }
+    | STRING_VAL  { $$.type = "STRING";  $$.val = 0;  strcpy($$.result, ""); }
     ;
 
 instructions:
@@ -123,15 +135,17 @@ affectation:
         }
         else {
             updateIDFValue($1, $3.val);
+            addQuad("=", $3.result[0] ? $3.result : "", "", $1);
         }
       }
     ;
 
 expression:
-      constant { $$.type = $1.type; $$.val = $1.val; }
+      constant { $$.type = $1.type; $$.val = $1.val; strcpy($$.result, ""); }
     | IDF { 
         $$.type = getVarType($1); 
         $$.val = getVarValue($1); 
+        strncpy($$.result, $1, 31); $$.result[31] = '\0';
       }
     | expression op_arithmetique expression {
         if (strcmp($1.type, $3.type) != 0) {
@@ -139,6 +153,9 @@ expression:
             exit(1);
         }
         $$.type = $1.type;
+        char* temp = newTemp();
+        addQuad($2, $1.result[0] ? $1.result : "", $3.result[0] ? $3.result : "", temp);
+        strcpy($$.result, temp);
         if (strcmp($2, "+") == 0) $$.val = $1.val + $3.val;
         else if (strcmp($2, "-") == 0) $$.val = $1.val - $3.val;
         else if (strcmp($2, "*") == 0) $$.val = $1.val * $3.val;
@@ -353,6 +370,8 @@ int main(int argc, char *argv[]) {
     
     if (yyparse() == 0) {
         afficher();
+        printQuads();
+        generateAssembly("output.asm");
     }
     
     freeAllTables();
