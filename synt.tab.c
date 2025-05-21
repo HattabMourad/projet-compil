@@ -1601,28 +1601,28 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 106 "synt.y"
-    { (yyval.exprAttr).type = "INTEGER"; (yyval.exprAttr).val = (yyvsp[(1) - (1)].entier); strcpy((yyval.exprAttr).result, ""); ;}
+    { (yyval.exprAttr).type = "INTEGER"; (yyval.exprAttr).val = (yyvsp[(1) - (1)].entier); sprintf((yyval.exprAttr).result, "%d", (yyvsp[(1) - (1)].entier)); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
 #line 107 "synt.y"
-    { (yyval.exprAttr).type = "FLOAT";   (yyval.exprAttr).val = (yyvsp[(1) - (1)].reel); strcpy((yyval.exprAttr).result, ""); ;}
+    { (yyval.exprAttr).type = "FLOAT";   (yyval.exprAttr).val = (yyvsp[(1) - (1)].reel); sprintf((yyval.exprAttr).result, "%f", (yyvsp[(1) - (1)].reel)); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
 #line 108 "synt.y"
-    { (yyval.exprAttr).type = "CHAR";    (yyval.exprAttr).val = (yyvsp[(1) - (1)].reel); strcpy((yyval.exprAttr).result, ""); ;}
+    { (yyval.exprAttr).type = "CHAR";    (yyval.exprAttr).val = (yyvsp[(1) - (1)].reel); sprintf((yyval.exprAttr).result, "%c", (yyvsp[(1) - (1)].reel)); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
 #line 109 "synt.y"
-    { (yyval.exprAttr).type = "STRING";  (yyval.exprAttr).val = 0;  strcpy((yyval.exprAttr).result, ""); ;}
+    { (yyval.exprAttr).type = "STRING";  (yyval.exprAttr).val = 0;  strncpy((yyval.exprAttr).result, (yyvsp[(1) - (1)].str), 31); (yyval.exprAttr).result[31] = '\0'; ;}
     break;
 
   case 25:
@@ -1649,7 +1649,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 144 "synt.y"
-    { (yyval.exprAttr).type = (yyvsp[(1) - (1)].exprAttr).type; (yyval.exprAttr).val = (yyvsp[(1) - (1)].exprAttr).val; strcpy((yyval.exprAttr).result, ""); ;}
+    { (yyval.exprAttr).type = (yyvsp[(1) - (1)].exprAttr).type; (yyval.exprAttr).val = (yyvsp[(1) - (1)].exprAttr).val; strncpy((yyval.exprAttr).result, (yyvsp[(1) - (1)].exprAttr).result, 31); (yyval.exprAttr).result[31] = '\0'; ;}
     break;
 
   case 27:
@@ -2235,6 +2235,8 @@ int main(int argc, char *argv[]) {
     
     if (yyparse() == 0) {
         afficher();
+        printQuads();
+        optimizeQuads();
         printQuads();
         generateAssembly("output.asm");
     }

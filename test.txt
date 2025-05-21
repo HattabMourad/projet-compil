@@ -3,6 +3,8 @@ DATA
     INTEGER: A;
     INTEGER: B;
     INTEGER: C;
+    INTEGER: I;
+    INTEGER: J;
     FLOAT: X;
     VECTOR: Tab[0, 10: INTEGER];
     VECTOR: Tab1[0, 50: FLOAT];
@@ -22,9 +24,9 @@ CODE
     DISPLAY("Value of B $": B);
 
     IF (A.GE.10.AND.B.LT.5):
-        B = B + 1;
+        DISPLAY("Condition met");
     ELSE:
-        B = B - 1;
+        DISPLAY("Condition not met");
     END
 
     IF (NOT.A.EQ.5):

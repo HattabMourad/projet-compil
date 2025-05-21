@@ -103,10 +103,10 @@ list_variables:
     ;
 
 constant:
-      INTEGER_VAL { $$.type = "INTEGER"; $$.val = $1; strcpy($$.result, ""); }
-    | FLOAT_VAL   { $$.type = "FLOAT";   $$.val = $1; strcpy($$.result, ""); }
-    | CHAR_VAL    { $$.type = "CHAR";    $$.val = $1; strcpy($$.result, ""); }
-    | STRING_VAL  { $$.type = "STRING";  $$.val = 0;  strcpy($$.result, ""); }
+      INTEGER_VAL { $$.type = "INTEGER"; $$.val = $1; sprintf($$.result, "%d", $1); }
+    | FLOAT_VAL   { $$.type = "FLOAT";   $$.val = $1; sprintf($$.result, "%f", $1); }
+    | CHAR_VAL    { $$.type = "CHAR";    $$.val = $1; sprintf($$.result, "%c", $1); }
+    | STRING_VAL  { $$.type = "STRING";  $$.val = 0;  strncpy($$.result, $1, 31); $$.result[31] = '\0'; }
     ;
 
 instructions:
@@ -141,7 +141,7 @@ affectation:
     ;
 
 expression:
-      constant { $$.type = $1.type; $$.val = $1.val; strcpy($$.result, ""); }
+    constant { $$.type = $1.type; $$.val = $1.val; strncpy($$.result, $1.result, 31); $$.result[31] = '\0'; }
     | IDF { 
         $$.type = getVarType($1); 
         $$.val = getVarValue($1); 
@@ -370,6 +370,8 @@ int main(int argc, char *argv[]) {
     
     if (yyparse() == 0) {
         afficher();
+        printQuads();
+        optimizeQuads();
         printQuads();
         generateAssembly("output.asm");
     }
